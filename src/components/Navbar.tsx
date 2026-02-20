@@ -1,177 +1,186 @@
-import { forwardRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext';
+import { FiSun, FiMoon, FiMenu, FiX, FiGithub, FiLinkedin, FiMail } from 'react-icons/fi';
 
-const Navbar = forwardRef<HTMLDivElement>((_, ref) => {
-    const [scrolled, setScrolled] = useState(false);
-    const [activeSection, setActiveSection] = useState('');
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+const navItems = [
+  { id: 'about', label: 'About' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'contact', label: 'Contact' },
+];
 
-    useEffect(() => {
-        const handleScroll = () => {
-            // Check if page is scrolled
-            const isScrolled = window.scrollY > 50;
-            setScrolled(isScrolled);
-            
-            // Determine active section based on scroll position
-            const sections = ['currently-working-on', 'about', 'experience', 'projects', 'achievements', 'contact'];
-            const currentSection = sections.find(section => {
-                const element = document.getElementById(section);
-                if (element) {
-                    const rect = element.getBoundingClientRect();
-                    return rect.top <= 100 && rect.bottom >= 100;
-                }
-                return false;
-            });
-            
-            if (currentSection) {
-                setActiveSection(currentSection);
-            }
-        };
+const Navbar = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-        e.preventDefault();
-        const element = document.getElementById(id);
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+      
+      const sections = navItems.map(item => item.id);
+      const current = sections.find(section => {
+        const element = document.getElementById(section);
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-            setIsMobileMenuOpen(false); // Close mobile menu after clicking
+          const rect = element.getBoundingClientRect();
+          return rect.top <= 150 && rect.bottom >= 150;
         }
+        return false;
+      });
+      
+      if (current) setActiveSection(current);
     };
 
-    const navItems = [
-        { id: 'currently-working-on', label: 'Current Work' },
-        { id: 'about', label: 'About Me' },
-        { id: 'experience', label: 'Experience' },
-        { id: 'projects', label: 'Projects' },
-        { id: 'achievements', label: 'Achievements'},
-        { id: 'contact', label: 'Contact' },
-        { 
-            id: 'resume',
-            label: 'Resume',
-            href: '/resume.pdf',
-            external: true
-        }
-    ];
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-    return (
-        <nav 
-            className={`fixed w-full px-6 md:px-12 transition-all duration-300 z-10 ${
-                scrolled 
-                    ? 'bg-white/90 backdrop-blur-md shadow-sm py-3 top-0' 
-                    : 'bg-transparent py-5 top-0'
-            }`}
-            id="navbar" 
-            ref={ref}
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setIsMobileMenuOpen(false);
+    }
+  };
+
+  return (
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled 
+          ? 'glass-solid py-3 shadow-lg' 
+          : 'bg-transparent py-5'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between">
+        {/* Logo */}
+        <motion.a 
+          href="#"
+          onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          className="flex items-center gap-2"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-            <div className="flex flex-row justify-between items-center">
-                {/* Logo */}
-                <div className="w-[8vh] h-[8vh]">
-                    <svg id="svgContainer" className="h-full" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
-                        <path 
-                            id="pen1" 
-                            className="stroke-black stroke-2 fill-none animate-draw1" 
-                            style={{ strokeDasharray: '192.5', strokeDashoffset: '385' }}
-                            d="M 2.0 2.0 L 62.0 2.0 L 62.0 17.0 L 17.0 17.0 L 17.0 32.0 L 42.0 32.0 L 42.0 47.0 L 17.0 47.0 L 17.0 62.0 L 77.0 62.0 L 77.0 107.0 L 57.6066017178 107.0 L 77.0 147.0"
-                        />
-                        <path 
-                            id="pen2" 
-                            className="stroke-black stroke-2 fill-none animate-draw2" 
-                            style={{ strokeDasharray: '135.5', strokeDashoffset: '271' }}
-                            d="M 2.0 2.0 L 2.0 77.0 L 32.0 77.0 L 32.0 147.0 L 47.0 147.0 L 47.0 117.606601718 L 62.0 147.0 L 77.0 147.0"
-                        />
-                        <path 
-                            id="pen3" 
-                            className="stroke-black stroke-2 fill-none animate-draw3" 
-                            style={{ strokeDasharray: '30', strokeDashoffset: '60' }}
-                            d="M 62.0 92.0 L 62.0 77.0 L 47.0 77.0 L 47.0 92.0 L 62.0 92.0"
-                        />        
-                    </svg>
-                </div>
+          <div className="w-10 h-10 relative">
+            <svg viewBox="0 0 40 40" className="w-full h-full">
+              <path 
+                d="M4 4 L20 4 L20 10 L10 10 L10 16 L16 16 L16 22 L10 22 L10 36 L36 36 L36 14 L30 14 L36 4"
+                fill="none"
+                stroke="url(#logoGradient)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <defs>
+                <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="var(--accent-primary)" />
+                  <stop offset="100%" stopColor="var(--accent-secondary)" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span className="font-display font-semibold text-lg hidden sm:block">
+            Ethan<span className="gradient-text">.dev</span>
+          </span>
+        </motion.a>
 
-                {/* Desktop Navigation Links */}
-                <div className="hidden md:flex items-center space-x-8">
-                    {navItems.map(({ id, label, href, external }) => (
-                        external ? (
-                            <a 
-                                key={id}
-                                href={href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-base font-medium tracking-wide text-gray-600 hover:text-black transition-colors duration-300"
-                            >
-                                {label}
-                            </a>
-                        ) : (
-                            <a 
-                                key={id}
-                                href={`#${id}`} 
-                                onClick={(e) => handleClick(e, id)}
-                                className={`text-base font-medium tracking-wide transition-all duration-300 relative group ${
-                                    activeSection === id 
-                                        ? 'text-black' 
-                                        : 'text-gray-600 hover:text-black'
-                                }`}
-                            >
-                                {label}
-                                <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-black transform origin-left transition-transform duration-300 ${
-                                    activeSection === id ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
-                                }`}></span>
-                            </a>
-                        )
-                    ))}
-                </div>
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-8">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => scrollToSection(item.id)}
+              className={`relative text-sm font-medium transition-colors ${
+                activeSection === item.id 
+                  ? 'text-[var(--accent-primary)]' 
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              {item.label}
+              {activeSection === item.id && (
+                <motion.div
+                  layoutId="activeNav"
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-accent-cyan to-accent-purple"
+                />
+              )}
+            </button>
+          ))}
 
-                {/* Mobile Menu Button */}
-                <button 
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    className="md:hidden text-gray-600 hover:text-black transition-colors duration-300"
+          {/* Theme Toggle */}
+          <motion.button
+            onClick={toggleTheme}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="p-2 rounded-full bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors"
+          >
+            {theme === 'dark' ? <FiSun /> : <FiMoon />}
+          </motion.button>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <div className="flex items-center gap-2 md:hidden">
+          <motion.button
+            onClick={toggleTheme}
+            whileTap={{ scale: 0.9 }}
+            className="p-2 rounded-full bg-[var(--bg-tertiary)] text-[var(--text-secondary)]"
+          >
+            {theme === 'dark' ? <FiSun /> : <FiMoon />}
+          </motion.button>
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-2 text-[var(--text-primary)]"
+          >
+            {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden glass-solid overflow-hidden"
+          >
+            <div className="px-4 py-4 space-y-2">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className={`block w-full text-left py-2 px-4 rounded-lg transition-colors ${
+                    activeSection === item.id 
+                      ? 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]' 
+                      : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
+                  }`}
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={2} 
-                            d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} 
-                        />
-                    </svg>
+                  {item.label}
                 </button>
+              ))}
+              
+              {/* Social Links */}
+              <div className="flex gap-4 pt-4 px-4 border-t border-[var(--border-subtle)]">
+                <a href="https://github.com/ereinha3" target="_blank" rel="noopener noreferrer" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                  <FiGithub size={20} />
+                </a>
+                <a href="https://linkedin.com/in/ethan-reinhart" target="_blank" rel="noopener noreferrer" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                  <FiLinkedin size={20} />
+                </a>
+                <a href="mailto:ethanreinhart@gmail.com" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                  <FiMail size={20} />
+                </a>
+              </div>
             </div>
-
-            {/* Mobile Menu */}
-            <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} absolute left-0 right-0 top-full bg-white/95 backdrop-blur-md shadow-lg py-4 px-6 transition-all duration-300`}>
-                {navItems.map(({ id, label, href, external }) => (
-                    <div key={id} className="py-2">
-                        {external ? (
-                            <a 
-                                href={href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block text-base font-medium tracking-wide text-gray-600 hover:text-black transition-colors duration-300"
-                            >
-                                {label}
-                            </a>
-                        ) : (
-                            <a 
-                                href={`#${id}`} 
-                                onClick={(e) => handleClick(e, id)}
-                                className={`block text-base font-medium tracking-wide transition-all duration-300 ${
-                                    activeSection === id 
-                                        ? 'text-black' 
-                                        : 'text-gray-600 hover:text-black'
-                                }`}
-                            >
-                                {label}
-                            </a>
-                        )}
-                    </div>
-                ))}
-            </div>
-        </nav>
-    );
-});
-
-Navbar.displayName = 'Navbar';
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
+  );
+};
 
 export default Navbar;

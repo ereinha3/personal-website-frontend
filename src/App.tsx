@@ -1,73 +1,36 @@
-import { useEffect, useRef } from 'react';
-
-import './App.css'; 
+import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
-import Intro from './components/Intro';
-import About from './components/About';
-import Experience from './components/Experience';
+import Hero from './components/Hero';
+import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Contact from './components/Contact';
-import Icons from './components/Icons';
-import ChatBot from './components/ChatBot/ChatBot';
-import CurrentlyWorkingOn from './components/CurrentlyWorkingOn';
-import Awards from './components/Awards'
+import Organizations from './components/Organizations';
+import { GitHubStats } from './components/GitHub';
 
-const App = () => {
-  const navbarRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Add scroll padding to account for fixed navbar
-    document.documentElement.style.scrollPadding = '120px 0 0 0';
-    
-    const navbar = document.getElementById('navbar');
-    if (!navbar) return;
-    
-    let lastScrollTop = 0;
-
-    // Listen for scroll events
-    window.addEventListener('scroll', () => {
-      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-
-      // If user scrolled down and navbar is not already hidden, hide it
-      if (currentScroll > lastScrollTop && !navbar.classList.contains('navbar-hidden')) {
-        navbar.classList.add('navbar-hidden');
-      } 
-      // If user scrolled up and navbar is hidden, show it
-      else if (currentScroll < lastScrollTop && navbar.classList.contains('navbar-hidden')) {
-        navbar.classList.remove('navbar-hidden');
-      } 
-      lastScrollTop = currentScroll;
-    });
-  }, []);
-
-  useEffect(() => {
-    const links = document.querySelectorAll('a');
-    links.forEach(link => {
-      link.target = '_blank';
-    });
-
-    const overrides = document.getElementsByClassName('link_override');
-    for (let i = 0; i < overrides.length; i++) {
-      const element = overrides[i] as HTMLAnchorElement;
-      element.target = '_self';
-    }
-  }, []);
-
+function App() {
   return (
-    <div className="App">
-      <Navbar ref={navbarRef} />
-      <Intro/>
-      <CurrentlyWorkingOn/>
-      <About/>
-      <Experience/>
-      <Projects/>
-      <Awards/>
-      <Contact/>
-      <Icons/>
-      <ChatBot />
-    </div>
+    <ThemeProvider>
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <Navbar />
+
+        <main>
+          <Hero />
+          <Projects />
+          <GitHubStats />
+          <Organizations />
+          <Skills />
+          <Contact />
+        </main>
+        
+        {/* Footer */}
+        <footer className="py-8 px-4 bg-[var(--bg-secondary)] border-t border-[var(--border-subtle)]">
+          <div className="max-w-7xl mx-auto text-center text-[var(--text-tertiary)] text-sm">
+            <p>© {new Date().getFullYear()} Ethan Reinhart. All rights reserved.</p>
+          </div>
+        </footer>
+      </div>
+    </ThemeProvider>
   );
-};
+}
 
 export default App;
-

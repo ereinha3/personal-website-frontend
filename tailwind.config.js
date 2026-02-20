@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       animation: {
@@ -42,11 +43,24 @@ export default {
           'to': { strokeDashoffset: '0' }
         }
       },
+      fontFamily: {
+        'display': ['Clash Display', 'sans-serif'],
+        'body': ['Satoshi', 'sans-serif'],
+        'mono': ['JetBrains Mono', 'monospace'],
+      },
+      colors: {
+        accent: {
+          cyan: '#22d3ee',
+          purple: '#a78bfa',
+        }
+      },
       borderRadius: {
         '5%': '5%',
       },
       boxShadow: {
         'custom': '0 10px 20px rgba(0,0,0,0.2)',
+        'glow-cyan': '0 0 30px rgba(34, 211, 238, 0.3)',
+        'glow-purple': '0 0 30px rgba(167, 139, 250, 0.3)',
       },
       textShadow: {
         'sm': '-2px 4px 4px rgba(0, 0, 0, 0.5)',
@@ -55,6 +69,7 @@ export default {
       },
       backgroundImage: {
         'radial-gray': 'radial-gradient(circle at center, rgb(156 163 175) 0%, rgb(209 213 219) 50%, rgb(243 244 246) 100%)',
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       }
     },
   },
@@ -71,5 +86,3 @@ export default {
     },
   ],
 }
-
-

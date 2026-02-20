@@ -1,71 +1,161 @@
-import { useEffect } from 'react';
-import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { FiMail, FiGithub, FiLinkedin, FiCheck, FiAlertCircle } from 'react-icons/fi';
 
 const Contact = () => {
-    const ref = useScrollAnimation();
-    
-    useEffect(() => {
-        if (ref.current) {
-            ref.current.classList.add('animate-in');
-            
-            const childElements = ref.current.querySelectorAll('.animate-ready');
-            childElements.forEach(element => {
-                element.classList.add('animate-in');
-            });
-        }
-    }, []);
-    
-    return (
-        <section id="contact" className="relative bg-gradient-to-b from-white to-gray-50 mt-[20vh] pb-[20vh]">
-            <div ref={ref} className="animate-ready mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Title Section */}
-                <div className="animate-ready delay-100 flex items-center justify-center w-full mb-[10vh]">
-                    <div className="animate-ready delay-200 h-full w-[10vw] flex flex-col items-center justify-center">
-                        <div className="animate-ready delay-200 h-[0.3rem] w-full bg-black"/>
-                    </div>
-                    <h2 className="animate-ready delay-100 text-4xl md:text-5xl font-bold text-black mb-4 px-8">
-                        Contact
-                    </h2>
-                    <div className="animate-ready delay-200 h-full w-[10vw] flex flex-col items-center justify-center">
-                        <div className="animate-ready delay-200 h-[0.3rem] w-full bg-black"/>
-                    </div>
-                </div>
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
-                {/* Content */}
-                <div className="animate-ready delay-300 max-w-4xl mx-auto text-center">
-                    <p className="text-xl md:text-2xl text-gray-700 mb-12">
-                        Want to know more? Let's get in touch.
-                    </p>
-                    
-                    <div className="animate-ready delay-400 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-                        <a 
-                            href="https://www.linkedin.com/in/ethan-reinhart-3bb28b285/"
-                            className="animate-ready delay-500 group p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
-                        >
-                            <h3 className="text-xl font-semibold mb-2 group-hover:text-gray-600 transition-colors">LinkedIn</h3>
-                            <p className="text-gray-600">Connect with me professionally</p>
-                        </a>
-                        
-                        <a 
-                            href="mailto:ethanreinhart@gmail.com"
-                            className="animate-ready delay-500 group p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
-                        >
-                            <h3 className="text-xl font-semibold mb-2 group-hover:text-gray-600 transition-colors">Email</h3>
-                            <p className="text-gray-600">Send me a message directly</p>
-                        </a>
-                        
-                        <a 
-                            href="https://github.com/ereinha3"
-                            className="animate-ready delay-500 group p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
-                        >
-                            <h3 className="text-xl font-semibold mb-2 group-hover:text-gray-600 transition-colors">GitHub</h3>
-                            <p className="text-gray-600">Check out my code</p>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+    
+    try {
+      const apiBase = import.meta.env.VITE_API_BASE || '';
+      const response = await fetch(`${apiBase}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  return (
+    <section id="contact" className="min-h-screen py-20 px-4 md:px-8 lg:px-16 bg-[var(--bg-secondary)] flex items-center">
+      <div className="max-w-4xl mx-auto text-center w-full">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-16"
+        >
+          <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
+            Let's <span className="gradient-text">Connect</span>
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-accent-cyan to-accent-purple mx-auto rounded-full" />
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="text-xl text-[var(--text-secondary)] mb-12 max-w-2xl mx-auto"
+        >
+          I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
+        </motion.p>
+
+        {/* Contact Form */}
+        <motion.form
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+          onSubmit={handleSubmit}
+          className="max-w-md mx-auto mb-16 space-y-4 text-left"
+        >
+          <div>
+            <input
+              type="text"
+              placeholder="Your Name"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-subtle)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-accent-cyan transition-colors"
+            />
+          </div>
+          <div>
+            <input
+              type="email"
+              placeholder="Your Email"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-subtle)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-accent-cyan transition-colors"
+            />
+          </div>
+          <div>
+            <textarea
+              placeholder="Your Message"
+              required
+              rows={4}
+              value={formData.message}
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-subtle)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-accent-cyan transition-colors resize-none"
+            />
+          </div>
+          
+          <button
+            type="submit"
+            disabled={status === 'loading'}
+            className="w-full py-3 bg-gradient-to-r from-accent-cyan to-accent-purple text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-accent-cyan/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {status === 'loading' ? 'Sending...' : 'Send Message'}
+          </button>
+
+          {status === 'success' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 text-green-400 justify-center">
+              <FiCheck /> Message sent successfully!
+            </motion.div>
+          )}
+          {status === 'error' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 text-red-400 justify-center">
+              <FiAlertCircle /> Failed to send. Try again or email directly.
+            </motion.div>
+          )}
+        </motion.form>
+
+        {/* Social Links */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          className="flex justify-center gap-6 mb-16"
+        >
+          {[
+            { icon: FiGithub, href: 'https://github.com/ereinha3', label: 'GitHub' },
+            { icon: FiLinkedin, href: 'https://linkedin.com/in/ethan-reinhart', label: 'LinkedIn' },
+            { icon: FiMail, href: 'mailto:ethanreinhart@gmail.com', label: 'Email' },
+          ].map(({ icon: Icon, href, label }) => (
+            <motion.a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.1, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-4 rounded-full bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:text-accent-cyan border border-[var(--border-subtle)] hover:border-accent-cyan transition-all"
+              aria-label={label}
+            >
+              <Icon size={24} />
+            </motion.a>
+          ))}
+        </motion.div>
+
+        {/* Footer */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5 }}
+          className="text-[var(--text-tertiary)] text-sm"
+        >
+          <p>© {new Date().getFullYear()} Ethan Reinhart. Built with React & Tailwind.</p>
+        </motion.div>
+      </div>
+    </section>
+  );
 };
 
 export default Contact;
