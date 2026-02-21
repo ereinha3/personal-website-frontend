@@ -30,7 +30,7 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="min-h-screen py-20 px-4 md:px-8 lg:px-16 bg-[var(--bg-secondary)] flex items-center">
+    <section id="contact" className="min-h-screen py-20 px-4 md:px-8 lg:px-16 bg-gray-950 flex items-center">
       <div className="max-w-4xl mx-auto text-center w-full">
         {/* Section Header */}
         <motion.div
@@ -143,16 +143,6 @@ const Contact = () => {
           ))}
         </motion.div>
 
-        {/* Footer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-          className="text-[var(--text-tertiary)] text-sm"
-        >
-          <p>© {new Date().getFullYear()} Ethan Reinhart. Built with React & Tailwind.</p>
-        </motion.div>
       </div>
     </section>
   );

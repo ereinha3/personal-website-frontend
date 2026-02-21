@@ -1,168 +1,166 @@
-import { useState, useEffect } from 'react'
-import { useScrollAnimation } from '../hooks/useScrollAnimation'
+import { useGitHubOrgRepos, GitHubRepo } from '../hooks/useGitHub';
+import { motion } from 'framer-motion';
 
-const languages = [
-    { name: 'JavaScript', size: 'large', level: 1, position: { x: 65, y: 10 }, mobilePosition: { x: 70, y: 10 } },
-    { name: 'C', size: 'large', level: 1, position: { x: 10, y: 35 }, mobilePosition: { x: 15, y: 25 } },
-    { name: 'Python', size: 'large', level: 1, position: { x: 40, y: 65 }, mobilePosition: { x: 45, y: 60 } },
-    { name: 'Bash', size: 'medium', level: 2, position: { x: 25, y: 95 }, mobilePosition: { x: 25, y: 85 } },
-    { name: 'C++', size: 'medium', level: 2, position: { x: 75, y: 45 }, mobilePosition: { x: 80, y: 40 } },
-    { name: 'HTML', size: 'medium', level: 2, position: { x: 30, y: 5 }, mobilePosition: { x: 30, y: 15 } },
-    { name: 'CSS', size: 'medium', level: 2, position: { x: 80, y: 75 }, mobilePosition: { x: 85, y: 70 } },
-    { name: 'CUDA', size: 'medium', level: 2, position: { x: 55, y: 40 }, mobilePosition: { x: 60, y: 45 } },
-    { name: 'Swift', size: 'small', level: 3, position: { x: 35, y: 40 }, mobilePosition: { x: 40, y: 35 } },
-    { name: 'SQL', size: 'small', level: 3, position: { x: 5, y: 80 }, mobilePosition: { x: 15, y: 75 } },
-    { name: 'C#', size: 'small', level: 3, position: { x: 65, y: 100 }, mobilePosition: { x: 70, y: 90 } },
-    { name: 'Haskell', size: 'small', level: 3, position: { x: 10, y: 10 }, mobilePosition: { x: 10, y: 5 } }
-];
+const FeaturedProjectCard = ({ repo, index }: { repo: GitHubRepo; index: number }) => {
+  const getLanguageColor = (lang: string | null) => {
+    const colors: Record<string, string> = {
+      Python: '#3572A5',
+      JavaScript: '#f1e05a',
+      TypeScript: '#2b7489',
+      'C++': '#f34b7d',
+      C: '#555555',
+      Go: '#00ADD8',
+      Rust: '#dea584',
+    };
+    return colors[lang || ''] || '#8b949e';
+  };
 
-const technologies = [
-    { name: 'Git', size: 'large', level: 1, position: { x: 40, y: 40 }, mobilePosition: { x: 45, y: 30 } },
-    { name: 'Pandas', size: 'large', level: 1, position: { x: 15, y: 70 }, mobilePosition: { x: 15, y: 65 } },
-    { name: 'Linux', size: 'large', level: 1, position: { x: 60, y: 5 }, mobilePosition: { x: 65, y: 10 } },
-    { name: 'Docker', size: 'medium', level: 2, position: { x: 70, y: 30 }, mobilePosition: { x: 75, y: 35 } },
-    { name: 'React', size: 'medium', level: 2, position: { x: 20, y: 15 }, mobilePosition: { x: 25, y: 20 } },
-    { name: 'SLURM', size: 'medium', level: 2, position: { x: 10, y: 45 }, mobilePosition: { x: 15, y: 45 } },
-    { name: 'OpenMP', size: 'medium', level: 2, position: { x: 85, y: 55 }, mobilePosition: { x: 85, y: 60 } },
-    { name: 'PyTorch', size: 'large', level: 1, position: { x: 55, y: 75 }, mobilePosition: { x: 55, y: 80 } },
-    { name: 'MPI', size: 'small', level: 3, position: { x: 75, y: 80 }, mobilePosition: { x: 80, y: 90 } }
-];
-
-const SkillCloud = ({ items, title }: { items: Array<{ name: string, size: string, level: number, position: { x: number, y: number }, mobilePosition: { x: number, y: number } }>, title: string }) => {
-    const [isMobile, setIsMobile] = useState(false);
-    const ref = useScrollAnimation();
-
-    useEffect(() => {
-        // Set initial value
-        setIsMobile(window.innerWidth < 768);
-
-        // Add resize listener
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 768);
-        };
-
-        window.addEventListener('resize', handleResize);
-
-        // Cleanup
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
-    // Add a class to make the component visible immediately on page load
-    useEffect(() => {
-        if (ref.current) {
-            ref.current.classList.add('animate-in');
-            
-            // Also add animate-in to all child elements with animate-ready class
-            const childElements = ref.current.querySelectorAll('.animate-ready');
-            childElements.forEach(element => {
-                element.classList.add('animate-in');
-            });
-        }
-    }, []);
-
-    return (
-        <div ref={ref} className="animate-ready w-full lg:w-[40vw] my-[1vh] md:my-[2vh]">
-            <div className="animate-ready delay-100 text-center text-[2.5rem] mb-[2vh] md:mb-[3vh] mx-auto font-semibold flex flex-col items-center justify-center">
-                <p className='mb-2 animate-ready delay-100'>{title}</p>
-                <div className="animate-ready delay-200 h-full w-[6vw] flex flex-col items-center justify-center">
-                    <div className="animate-ready delay-200 h-[0.3rem] w-full bg-black"/>
-                </div>
-            </div>
-            <div className="relative h-[30vh] md:h-[40vh]">
-                {items.map((item, index) => {
-                    const position = isMobile ? item.mobilePosition : item.position;
-                    return (
-                        <div
-                            key={item.name}
-                            style={{
-                                left: `${position.x}%`,
-                                top: `${position.y}%`,
-                            }}
-                            className={`
-                                absolute transform -translate-x-1/2 -translate-y-1/2
-                                hover:scale-110 transition-all duration-300
-                                flex justify-center items-center text-center
-                                ${item.size === 'large' ? 'text-[1.75rem] md:text-[2.5rem] text-shadow-lg' : 
-                                  item.size === 'medium' ? 'text-[1.5rem] md:text-[2rem] text-shadow-md' : 
-                                  'text-[1.25rem] md:text-[1.5rem] text-shadow-sm'}
-                                ${item.level === 1 ? 'font-bold' : item.level === 2 ? 'font-semibold' : 'font-normal'}
-                                animate-float-${index % 3 + 1}
-                            `}
-                        >
-                            {item.name}
-                        </div>
-                    );
-                })}
-            </div>
+  return (
+    <motion.a
+      href={repo.html_url}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1 }}
+      className="group flex-shrink-0 w-64 bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700/50 hover:border-blue-500/50 transition-all"
+    >
+      <div className="flex items-center justify-between mb-2">
+        <h4 className="font-semibold text-white group-hover:text-blue-400 transition-colors truncate">
+          {repo.name}
+        </h4>
+        <svg className="w-4 h-4 text-gray-500 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+      </div>
+      
+      <p className="text-gray-400 text-sm mb-3 line-clamp-2 h-10">
+        {repo.description || 'No description available'}
+      </p>
+      
+      <div className="flex items-center gap-3 text-xs text-gray-500">
+        {repo.language && (
+          <div className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: getLanguageColor(repo.language) }} />
+            <span>{repo.language}</span>
+          </div>
+        )}
+        <div className="flex items-center gap-1">
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z" />
+          </svg>
+          <span>{repo.stargazers_count}</span>
         </div>
-    );
+      </div>
+    </motion.a>
+  );
 };
 
-const Experience = () => {
-    const ref = useScrollAnimation();
-    
-    useEffect(() => {
-        if (ref.current) {
-            ref.current.classList.add('animate-in');
-            
-            const childElements = ref.current.querySelectorAll('.animate-ready');
-            childElements.forEach(element => {
-                element.classList.add('animate-in');
-            });
-        }
-    }, []);
-    
-    return (
-        <section id="experience" className="relative min-h-screen bg-gradient-to-b from-gray-50 to-white pb-24">
-            <div ref={ref} className="animate-ready mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Title Section */}
-                <div className="animate-ready delay-100 flex flex-col items-center justify-center w-full mb-[10vh]">
-                    <div className="animate-ready delay-200 h-full w-[70vw] ml-[30vw] flex flex-col items-center justify-center mb-8">
-                        <div className="animate-ready delay-200 h-[0.3rem] w-full bg-black"/>
-                    </div>
-                    <div className="animate-ready delay-200 h-full w-full mx-auto flex items-center justify-center mb-8">  
-                        <div className="animate-ready delay-200 h-full w-full flex flex-col items-center justify-center">
-                            <div className="animate-ready delay-200 h-[0.3rem] w-[5vw] ml-auto bg-black"/>
-                        </div>
-                        <h2 className="animate-ready delay-100 text-4xl md:text-5xl font-bold text-black px-4">
-                            Experience
-                        </h2>
-                        <div className="animate-ready delay-200 h-full w-full flex flex-col items-center justify-center">
-                            <div className="animate-ready delay-200 h-[0.3rem] w-[5vw] mr-auto bg-black"/>
-                        </div>
-                    </div>
-                    
-                    <div className="animate-ready delay-200 h-full w-[70vw] mr-[30vw] flex flex-col items-center justify-center">
-                        <div className="animate-ready delay-200 h-[0.3rem] w-full bg-black"/>
-                    </div>
-                </div>
+const ProjectCarousel = ({ repos }: { repos: GitHubRepo[] }) => {
+  if (repos.length === 0) return null;
+  
+  return (
+    <div className="relative">
+      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+        {repos.slice(0, 6).map((repo, index) => (
+          <FeaturedProjectCard key={repo.id} repo={repo} index={index} />
+        ))}
+      </div>
+    </div>
+  );
+};
 
-                {/* Introduction Card */}
-                <div className="animate-ready delay-300 p-8 mb-8 w-[70vw] text-center mx-auto">
-                    <p className="text-2xl text-gray-700 leading-relaxed">
-                        I've worked with a variety of technologies throughout under-graduate curriculumn, clubs, and personal projects. 
-                        The technologies and languages below are emphasized in order of experience. 
-                        Outside of these, I also have experience with{' '}
-                        <a className="text-blue-600 hover:text-blue-800 transition-colors font-semibold" href="https://leetcode.com/u/ereinha3/">dynamic programming</a>,{' '}
-                        <a className="text-blue-600 hover:text-blue-800 transition-colors font-semibold" href="https://github.com/ereinha3/Operating-Systems/tree/main/Project1">OS management</a>,{' '}
-                        <a className="text-blue-600 hover:text-blue-800 transition-colors font-semibold" href="https://github.com/ereinha3/Operating-Systems/tree/main/Project3">parallelism</a>,{' '}
-                        <a className="text-blue-600 hover:text-blue-800 transition-colors font-semibold" href="https://github.com/ereinha3/Introduction-to-Cryptography">cryptography</a>,{' '}
-                        many Python libraries including PyTorch,{' '}
-                        <a className="text-blue-600 hover:text-blue-800 transition-colors font-semibold" href="https://github.com/ereinha3/Watch-Profits-Soar-to-the-Ether">TensorFlow</a>,{' '}
-                        and a versatile background in Applied Mathematics.
-                    </p>
-                </div>
+export default function Experience() {
+  const { orgRepos, loading } = useGitHubOrgRepos(['FarmGPU']);
+  const farmGpuRepos = orgRepos['FarmGPU'] || [];
+  const featuredRepos = farmGpuRepos
+    .filter(repo => !repo.fork && !repo.archived)
+    .sort((a, b) => b.stargazers_count - a.stargazers_count);
 
-                {/* Skill Clouds */}
-                <div className="animate-ready delay-400 flex flex-col justify-center items-center lg:flex-row w-full gap-0 lg:gap-4">
-                    <SkillCloud items={languages} title="Languages" />
-                    <SkillCloud items={technologies} title="Technologies" />
-                </div>
+  return (
+    <section id="experience" className="py-20 px-4 md:px-8 lg:px-16 bg-gray-950 relative overflow-hidden">
+      {/* Gradient orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{ x: [0, 60, 0], y: [0, -40, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+          className="absolute top-1/4 right-10 w-80 h-80 bg-accent-purple/10 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{ x: [0, -60, 0], y: [0, 40, 0] }}
+          transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
+          className="absolute bottom-1/4 left-10 w-80 h-80 bg-accent-cyan/10 rounded-full blur-3xl"
+        />
+      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="max-w-6xl mx-auto relative z-10"
+      >
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+          Experience
+        </h2>
+        <p className="text-gray-400 mb-8">Where I've worked and what I've built</p>
+
+        <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 rounded-2xl p-6 md:p-8 border border-blue-500/20 mb-8">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-1">AI Systems Engineer</h3>
+              <div className="flex items-center gap-2">
+                <a 
+                  href="https://github.com/FarmGPU" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 transition-colors font-medium flex items-center gap-1"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                  </svg>
+                  FarmGPU
+                </a>
+              </div>
             </div>
-        </section>
-    );
-};
+            <span className="text-gray-400 text-sm">2024 - Present</span>
+          </div>
+          
+          <p className="text-gray-300 leading-relaxed mb-6">
+            Building GPU-accelerated solutions for agricultural optimization. Developing machine learning 
+            pipelines, computer vision systems, and high-performance computing infrastructure to analyze 
+            crop health, predict yields, and optimize resource allocation for modern farming operations.
+          </p>
+          
+          <div className="mb-6">
+            <h4 className="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wider">Skills Developed</h4>
+            <div className="flex flex-wrap gap-2">
+              {['CUDA', 'PyTorch', 'Computer Vision', 'Distributed Systems', 'MLOps', 'GPU Computing'].map(skill => (
+                <span 
+                  key={skill}
+                  className="px-3 py-1 bg-blue-500/10 text-blue-300 rounded-full text-sm border border-blue-500/20"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
 
-export default Experience;
+          {featuredRepos.length > 0 && (
+            <div>
+              <h4 className="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wider">Featured Projects</h4>
+              {loading ? (
+                <div className="flex gap-4">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="w-64 h-32 bg-gray-800/50 rounded-lg animate-pulse" />
+                  ))}
+                </div>
+              ) : (
+                <ProjectCarousel repos={featuredRepos} />
+              )}
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </section>
+  );
+}

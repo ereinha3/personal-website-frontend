@@ -26,7 +26,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 bg-gray-950">
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Gradient orbs */}
@@ -51,8 +51,8 @@ const Hero = () => {
         <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 grid lg:grid-cols-2 gap-12 items-center relative z-10">
-        {/* Left Content */}
+      <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
+        {/* Content */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -128,59 +128,7 @@ const Hero = () => {
             </a>
           </motion.div>
         </motion.div>
-
-        {/* Right Content - Stats Card */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="hidden lg:block"
-        >
-          <div className="glass-solid rounded-3xl p-8 relative overflow-hidden">
-            {/* Decorative gradient */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-accent-cyan/20 to-accent-purple/20 rounded-full blur-3xl" />
-            
-            <div className="relative z-10 space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-[var(--border-subtle)]">
-                  <img 
-                    src="/headshot.png" 
-                    alt="Ethan Reinhart" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <h3 className="font-display text-2xl font-bold">M.S. Candidate</h3>
-                  <p className="text-[var(--text-secondary)]">University of Oregon</p>
-                  <p className="text-accent-cyan font-mono text-sm">GPA: 4.0</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-[var(--bg-tertiary)]">
-                  <p className="text-3xl font-bold gradient-text">15+</p>
-                  <p className="text-sm text-[var(--text-secondary)]">Projects</p>
-                </div>
-                <div className="p-4 rounded-xl bg-[var(--bg-tertiary)]">
-                  <p className="text-3xl font-bold gradient-text">2</p>
-                  <p className="text-sm text-[var(--text-secondary)]">Degrees</p>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {['Python', 'PyTorch', 'ML', 'Systems'].map((skill) => (
-                  <span 
-                    key={skill}
-                    className="px-3 py-1 text-sm rounded-full bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border border-[var(--border-subtle)]"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
+       </div>
 
       {/* Scroll Indicator */}
       <motion.button

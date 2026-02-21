@@ -4,9 +4,10 @@ import { useTheme } from '../context/ThemeContext';
 import { FiSun, FiMoon, FiMenu, FiX, FiGithub, FiLinkedin, FiMail } from 'react-icons/fi';
 
 const navItems = [
-  { id: 'about', label: 'About' },
+  { id: 'education', label: 'Education' },
   { id: 'experience', label: 'Experience' },
-  { id: 'projects', label: 'Projects' },
+  { id: 'hobbies', label: 'Hobbies' },
+  { id: 'dev', label: 'Dev' },
   { id: 'contact', label: 'Contact' },
 ];
 
